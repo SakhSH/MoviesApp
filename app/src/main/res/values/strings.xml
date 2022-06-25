@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MoviesApp</string>
+    <string name="tv_title_text">Название</string>
+    <string name="iv_logo">Logo image view</string>
+    <string name="tv_description_text">Описание фильма</string>
+    <string name="tv_app_name">MOVIES</string>
+    <string name="button_text">1</string>
+    <string name="iv_description">iv_logo_app</string>
+</resources>
