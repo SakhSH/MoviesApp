@@ -6,4 +6,7 @@
     <string name="tv_app_name">MOVIES</string>
     <string name="button_text">1</string>
     <string name="iv_description">iv_logo_app</string>
+    <string name="on_back_pressed_text">Press back again to exit</string>
+    <string name="exception_429_text">Too many requests</string>
+    <string name="try_again_text_button">Try again</string>
 </resources>

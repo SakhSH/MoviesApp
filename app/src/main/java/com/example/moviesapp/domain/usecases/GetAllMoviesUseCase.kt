@@ -1,7 +1,7 @@
 package com.example.moviesapp.domain.usecases
 
-import com.example.moviesapp.domain.MoviesRepository
 import com.example.moviesapp.domain.models.Movies
+import com.example.moviesapp.domain.MoviesRepository
 import javax.inject.Inject
 
 class GetAllMoviesUseCase @Inject constructor(

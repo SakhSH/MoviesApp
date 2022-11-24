@@ -15,5 +15,4 @@ interface RepositoryModule {
     @Singleton
     @Binds
     fun provideMovieRepository(impl: MoviesRepositoryImpl): MoviesRepository
-
 }

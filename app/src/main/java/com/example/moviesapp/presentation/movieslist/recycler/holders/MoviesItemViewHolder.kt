@@ -1,15 +1,15 @@
-package com.example.moviesapp.presentation.recyclerview.movies
+package com.example.moviesapp.presentation.movieslist.recycler.holders
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.moviesapp.presentation.models.ListItem
 import com.example.moviesapp.databinding.ItemMoviesBinding
-import com.example.moviesapp.domain.models.Movies
 
 class MoviesItemViewHolder(private val binding: ItemMoviesBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(
-        movie: Movies,
+        movie: ListItem.MoviesItem,
     ) {
         Glide.with(itemView.context)
             .load(movie.multimedia.src)

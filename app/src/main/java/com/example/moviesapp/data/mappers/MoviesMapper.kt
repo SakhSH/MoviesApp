@@ -10,17 +10,16 @@ class MoviesMapper @Inject constructor() {
 
     fun mapAllMoviesDto(dtoItems: List<MoviesDto>) = dtoItems.map { mapMoviesDto(it) }
 
-    private fun mapMoviesDto(dtoItem: MoviesDto) = with(dtoItem) {
+    private fun mapMoviesDto(dtoItem: MoviesDto) =
         Movies(
             displayTitle = dtoItem.displayTitle,
             summaryShort = dtoItem.summaryShort,
             multimedia = mapMultimediaDto(dtoItem.multimedia)
         )
-    }
 
-    private fun mapMultimediaDto(dtoItem: MultimediaDto) = with(dtoItem) {
+
+    private fun mapMultimediaDto(dtoItem: MultimediaDto) =
         Multimedia(
             src = dtoItem.src
         )
-    }
 }

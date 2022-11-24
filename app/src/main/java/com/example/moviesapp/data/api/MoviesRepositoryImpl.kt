@@ -12,6 +12,10 @@ class MoviesRepositoryImpl @Inject constructor(
 
     override suspend fun getAllMovies(page: Int): List<Movies> {
         val movies = apiService.getAllMovies(page).results
-        return mapper.mapAllMoviesDto(movies)
+        return try {
+            mapper.mapAllMoviesDto(movies)
+        } catch (e: Exception) {
+            listOf()
+        }
     }
 }
