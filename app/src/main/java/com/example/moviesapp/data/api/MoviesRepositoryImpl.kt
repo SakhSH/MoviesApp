@@ -18,4 +18,14 @@ class MoviesRepositoryImpl @Inject constructor(
             listOf()
         }
     }
+
+    override suspend fun searchMovies(query: String): List<Movies> {
+        val movies = apiService.searchMovies(query).results
+        return try {
+            mapper.mapAllMoviesDto(movies)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            listOf()
+        }
+    }
 }

@@ -18,8 +18,8 @@ class MoviesMapper @Inject constructor() {
         )
 
 
-    private fun mapMultimediaDto(dtoItem: MultimediaDto) =
+    private fun mapMultimediaDto(dtoItem: MultimediaDto?) =
         Multimedia(
-            src = dtoItem.src
+            src = dtoItem?.src
         )
 }

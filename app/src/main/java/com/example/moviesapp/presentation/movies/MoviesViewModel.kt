@@ -1,34 +1,45 @@
-package com.example.moviesapp.presentation.movieslist
+package com.example.moviesapp.presentation.movies
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moviesapp.domain.usecases.GetAllMoviesUseCase
+import com.example.moviesapp.domain.usecases.SearchMoviesUseCase
 import com.example.moviesapp.presentation.models.ListItem
 import com.example.moviesapp.presentation.models.ScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class MoviesViewModel @Inject constructor(
-    private val getAllMoviesUseCase: GetAllMoviesUseCase
+    private val getAllMoviesUseCase: GetAllMoviesUseCase,
+    private val searchMoviesUseCase: SearchMoviesUseCase,
 ) : ViewModel() {
 
     private val listMovies: MutableList<ListItem.MoviesItem> by lazy { mutableListOf() }
     private var countPage = FIRST_OFFSET
     private var isLoading = false
+    private var isSearchMovies = false
 
-    private val _screenState = MutableLiveData<ScreenState>()
-    val screenState: LiveData<ScreenState> = _screenState
+    private val _screenState = MutableStateFlow<ScreenState>(ScreenState.Loading)
+    val screenState: StateFlow<ScreenState> = _screenState.asStateFlow()
 
-    private val _movies = MutableLiveData<List<ListItem.MoviesItem>>()
-    val movies: LiveData<List<ListItem.MoviesItem>> = _movies
+    private val _movies = MutableStateFlow<List<ListItem.MoviesItem>>(listOf())
+    val movies: StateFlow<List<ListItem.MoviesItem>> = _movies.asStateFlow()
 
     init {
+        loadAllMovies(countPage)
+    }
+
+    fun loadAllMovies(){
+        countPage = FIRST_OFFSET
         loadAllMovies(countPage)
     }
 
@@ -48,7 +59,34 @@ class MoviesViewModel @Inject constructor(
                         listMovies.addAll(movies)
                     }
                 }
-                _movies.postValue(listMovies)
+                _movies.value = listMovies
+                _screenState.value = ScreenState.Content
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _screenState.value =
+                    ScreenState.Error("An error has occurred", e.message.toString())
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    fun searchMovies(query: String) {
+        viewModelScope.launch {
+            _screenState.value = ScreenState.Loading
+            try {
+                withContext(Dispatchers.IO) {
+                    val movies = searchMoviesUseCase(query).map {
+                        ListItem.MoviesItem(
+                            displayTitle = it.displayTitle,
+                            summaryShort = it.summaryShort,
+                            multimedia = it.multimedia
+                        )
+                    }
+                        listMovies.clear()
+                        listMovies.addAll(movies)
+                }
+                _movies.value = listMovies
                 _screenState.value = ScreenState.Content
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -79,6 +117,6 @@ class MoviesViewModel @Inject constructor(
 
     companion object {
         private const val NUMBER_ITEMS_PER_PAGE = 20
-        private const val FIRST_OFFSET = 0
+        const val FIRST_OFFSET = 0
     }
 }

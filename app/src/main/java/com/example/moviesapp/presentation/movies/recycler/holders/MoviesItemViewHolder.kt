@@ -1,5 +1,6 @@
-package com.example.moviesapp.presentation.movieslist.recycler.holders
+package com.example.moviesapp.presentation.movies.recycler.holders
 
+import android.text.Html
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.moviesapp.presentation.models.ListItem
@@ -15,6 +16,6 @@ class MoviesItemViewHolder(private val binding: ItemMoviesBinding) :
             .load(movie.multimedia.src)
             .into(binding.ivLogoMovie)
         binding.tvTitleText.text = movie.displayTitle
-        binding.tvDescriptionText.text = movie.summaryShort
+        binding.tvDescriptionText.text = Html.fromHtml(movie.summaryShort)
     }
 }

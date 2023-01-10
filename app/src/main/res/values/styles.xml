@@ -9,4 +9,13 @@
         <item name="fontFamily">@font/montserrat</item>
     </style>
 
+    <style name="BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconTint">@color/bottom_navigation_tint</item>
+        <item name="itemTextColor">@color/bottom_navigation_tint</item>
+    </style>
+
+    <style name="ToolbarWithSearchTheme" parent="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        <item name="colorAccent">@color/orange_tulip_tree</item>
+    </style>
+
 </resources>

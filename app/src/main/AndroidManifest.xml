@@ -17,7 +17,7 @@
         android:theme="@style/Theme.MovieApp"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.MoviesActivity"
+            android:name=".presentation.base.RootActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

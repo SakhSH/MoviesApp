@@ -9,4 +9,7 @@
     <string name="on_back_pressed_text">Press back again to exit</string>
     <string name="exception_429_text">Too many requests</string>
     <string name="try_again_text_button">Try again</string>
+    <string name="title_movies_list">Movies</string>
+    <string name="search">search</string>
+    <string name="title_critics_list">Critics</string>
 </resources>

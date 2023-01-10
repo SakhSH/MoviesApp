@@ -1,13 +1,13 @@
-package com.example.moviesapp.presentation.movieslist.recycler
+package com.example.moviesapp.presentation.movies.recycler
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moviesapp.presentation.models.ListItem
-import com.example.moviesapp.presentation.movieslist.recycler.holders.LoaderViewHolder
-import com.example.moviesapp.presentation.movieslist.recycler.holders.MoviesItemViewHolder
-import com.example.moviesapp.presentation.movieslist.recycler.holders.TooManyRequestViewHolder
+import com.example.moviesapp.presentation.movies.recycler.holders.LoaderViewHolder
+import com.example.moviesapp.presentation.movies.recycler.holders.MoviesItemViewHolder
+import com.example.moviesapp.presentation.movies.recycler.holders.TooManyRequestViewHolder
 import com.example.moviesapp.databinding.ItemMoviesBinding
 import com.example.moviesapp.databinding.ItemMoviesLoadingBinding
 import com.example.moviesapp.databinding.ItemMoviesTooManyRequestsBinding
@@ -67,6 +67,7 @@ class MoviesListAdapter @Inject constructor(
     }
 
     fun createLoader() {
+        if (currentList.isEmpty())  return
         if (currentList[currentList.lastIndex] != ListItem.Loader) {
             val listMut: MutableList<ListItem> = currentList.toMutableList()
             listMut.add(ListItem.Loader)

@@ -1,4 +1,4 @@
-package com.example.moviesapp.presentation.movieslist.recycler.holders
+package com.example.moviesapp.presentation.movies.recycler.holders
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moviesapp.databinding.ItemMoviesTooManyRequestsBinding

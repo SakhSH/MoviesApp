@@ -14,6 +14,13 @@ interface MoviesApiService {
         @Query("api-key") apiKey: String = BuildConfig.API_KEY
     ): AllMoviesResponse
 
+    @GET("reviews/search.json")
+    suspend fun searchMovies(
+        @Query("query") query: String,
+        @Query("order") order: String = ORDER,
+        @Query("api-key") apiKey: String = BuildConfig.API_KEY
+    ): AllMoviesResponse
+
     companion object {
         private const val ORDER = "by-opening-date"
     }

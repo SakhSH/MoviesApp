@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/navigation_movies_list"
+        android:icon="@drawable/ic_baseline_list_alt_white"
+        android:title="@string/title_movies_list" />
+
+    <item
+        android:id="@+id/navigation_critics"
+        android:icon="@drawable/ic_baseline_people_alt_white"
+        android:title="@string/title_critics_list" />
+
+</menu>

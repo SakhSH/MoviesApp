@@ -1,4 +1,4 @@
-package com.example.moviesapp.presentation.movieslist.recycler
+package com.example.moviesapp.presentation.movies.recycler
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.moviesapp.presentation.models.ListItem
