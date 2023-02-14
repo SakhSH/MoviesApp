@@ -5,12 +5,12 @@
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="@dimen/l_margin">
+    app:cardCornerRadius="@dimen/_12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/l_margin"
+        android:layout_marginTop="@dimen/_12dp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -19,7 +19,7 @@
             style="@style/MoviesText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/l_margin"
+            android:layout_marginVertical="@dimen/_12dp"
             android:text="@string/exception_429_text"
             android:textColor="@color/black"
             android:textSize="@dimen/text_title_size" />
