@@ -7,18 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moviesapp.R
-import com.example.moviesapp.Util.hideKeyboard
+import com.example.moviesapp.data.api.CodeResponse
 import com.example.moviesapp.databinding.FragmentMoviesBinding
 import com.example.moviesapp.presentation.models.ScreenState
 import com.example.moviesapp.presentation.movies.recycler.MoviesListAdapter
+import com.example.moviesapp.util.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
@@ -28,13 +29,30 @@ class MoviesFragment : Fragment() {
 
     private val viewModel by viewModels<MoviesViewModel>()
 
-    @Inject
-    lateinit var moviesAdapter: MoviesListAdapter
+    private val onScrollListener: RecyclerView.OnScrollListener by lazy {
+        object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
 
-    private var isLoadingItem = true
-    private var isListLoading = false
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+
+                val totalItemCount = layoutManager.itemCount
+                val lastVisibleItemPos = layoutManager.findLastVisibleItemPosition()
+
+                if ((lastVisibleItemPos == totalItemCount - 1)
+                    && (isCreateLoader) && totalItemCount > 0
+                ) {
+                    loadingNextPage()
+                }
+            }
+        }
+    }
+
     private var isCreateLoader = true
     private var pressedTime: Long = 0
+
+    @Inject
+    lateinit var moviesAdapter: MoviesListAdapter
 
     private var _binding: FragmentMoviesBinding? = null
     private val binding: FragmentMoviesBinding
@@ -74,92 +92,79 @@ class MoviesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        isListLoading = true
-
-        lifecycleScope.launchWhenStarted {
-            viewModel.screenState.collect { screenState ->
-                when (screenState) {
-                    ScreenState.Content -> showLoading(false)
-                    is ScreenState.Error -> showError(screenState.text, screenState.exception)
-                    ScreenState.Loading -> showLoading(true)
-                }
-            }
-        }
-
         setupRecyclerView()
-        lifecycleScope.launchWhenStarted {
-            viewModel.movies.collect { movies ->
-                moviesAdapter.submitList(movies)
-            }
-        }
-
-        binding.rvMoviesList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                val totalItemCount = layoutManager.itemCount
-                val lastVisibleItemPos = layoutManager.findLastVisibleItemPosition()
-
-                if (lastVisibleItemPos == totalItemCount - 1) {
-                    if (!isListLoading || !isCreateLoader) {
-                        return
-                    }
-                    loadingNextPage()
-                }
-            }
-        })
-
-        (binding.toolbar.menu.findItem(R.id.search).actionView as SearchView)
-            .apply {
-                setOnQueryTextListener(
-                    object : SearchView.OnQueryTextListener {
-                        override fun onQueryTextSubmit(query: String): Boolean {
-                            Toast.makeText(requireContext(), "submit", Toast.LENGTH_SHORT).show()
-//                            requireActivity().hideKeyboard()
-                            moviesAdapter.submitList(listOf())
-                            if (query.isEmpty()) viewModel.loadAllMovies()
-
-                            viewModel.searchMovies(query)
-                            clearFocus()
-                            return true
-                        }
-
-                        override fun onQueryTextChange(newText: String): Boolean {
-                            Toast.makeText(requireContext(), "text change", Toast.LENGTH_SHORT).show()
-                            /*eventSender?.sendEvent(
-                                PatientListEvent.SearchQueryChanged(
-                                    searchQuery = newText
-                                )
-                            )*/
-                            return true
-                        }
-
-                    }
-                )
-                setOnCloseListener {
-                    Toast.makeText(requireContext(), "close", Toast.LENGTH_SHORT).show()
-                    requireActivity().hideKeyboard()
-                    clearFocus()
-                    viewModel.loadAllMovies()
-                    true
-                }
-            }
+        setOnClickSearchAndClearButton()
+        setTextWatcherForEditText()
+        initObserve()
     }
 
+    private fun isOnScrollListenerRV(isActive: Boolean) {
+        with(binding.rvMoviesList) {
+            if (isActive) addOnScrollListener(onScrollListener)
+            else removeOnScrollListener(onScrollListener)
+        }
+    }
+
+    private fun setOnClickSearchAndClearButton() {
+        with(binding) {
+            materialCardViewSearch.setOnClickListener { doOnSearch() }
+            materialCardViewCancel.setOnClickListener { doOnCleanSearch() }
+        }
+    }
+
+
+    private fun doOnSearch() {
+        with(binding) {
+            moviesAdapter.submitList(emptyList())
+            requireActivity().hideKeyboard()
+            editText.clearFocus()
+            val query = editText.text.trim().toString()
+            viewModel.searchMovies(query)
+        }
+    }
+
+
+    private fun doOnCleanSearch() {
+        binding.editText.text.clear()
+    }
+
+    private fun setTextWatcherForEditText() {
+        with(binding) {
+            editText.doAfterTextChanged {
+                if (it.toString().isEmpty()) {
+                    moviesAdapter.submitList(emptyList())
+                    rvMoviesList.smoothScrollToPosition(0)
+                    materialCardViewCancel.isVisible = false
+                    requireActivity().hideKeyboard()
+                    editText.clearFocus()
+                    viewModel.loadAllMovies()
+                } else {
+                    if (it.toString().isNotEmpty()) {
+                        materialCardViewCancel.isVisible = true
+                    }
+                }
+            }
+        }
+    }
+
+
     private fun showLoading(isLoading: Boolean) {
-        if (isLoadingItem) {
-            binding.rvMoviesList.isVisible = !isLoading
-            binding.loader.isVisible = isLoading
-        } else {
+        with(binding) {
+            rvMoviesList.isVisible = !isLoading
+            loader.isVisible = isLoading
+        }
+    }
+
+    private fun showLoadingNextPage() {
+        with(binding) {
             isCreateLoader = true
-            binding.rvMoviesList.isVisible = true
-            binding.loader.isVisible = false
+            rvMoviesList.isVisible = true
+            loader.isVisible = false
         }
     }
 
     private fun showError(message: String, exception: String) {
-        if (exception.contains(HTTP_429_TOO_MANY_REQUESTS)) {
+        if (exception.contains(CodeResponse.TOO_MANY_REQUESTS.code)) {
             isCreateLoader = false
             moviesAdapter.createTooManyRequest()
         } else {
@@ -176,8 +181,28 @@ class MoviesFragment : Fragment() {
         }
     }
 
+    private fun initObserve() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.screenState.collect { screenState ->
+                when (screenState) {
+                    ScreenState.Loading -> showLoading(true)
+                    ScreenState.LoadingNextPage -> showLoadingNextPage()
+                    is ScreenState.Content -> {
+                        moviesAdapter.submitList(screenState.content)
+                        showLoading(false)
+                    }
+                    is ScreenState.Error -> showError(screenState.text, screenState.exception)
+                }
+            }
+        }
+        lifecycleScope.launchWhenStarted {
+            viewModel.isOnScrollListenerRecyclerView.collect {
+                isOnScrollListenerRV(it)
+            }
+        }
+    }
+
     private fun loadingNextPage() {
-        isLoadingItem = false
         moviesAdapter.createLoader()
         viewModel.loadingNextPage()
     }
@@ -188,11 +213,8 @@ class MoviesFragment : Fragment() {
     }
 
     companion object {
-        private const val HTTP_429_TOO_MANY_REQUESTS = "429"
-
         fun newInstance(): MoviesFragment {
             return MoviesFragment()
         }
     }
-
 }

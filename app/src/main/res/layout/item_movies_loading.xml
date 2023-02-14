@@ -5,14 +5,14 @@
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     android:gravity="center"
-    app:cardCornerRadius="@dimen/l_margin">
+    app:cardCornerRadius="@dimen/_12dp">
 
     <ProgressBar
         android:id="@+id/loader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        android:indeterminateTint="@color/white"
+        android:indeterminateTint="@color/gray_dark"
         android:indeterminateTintMode="src_atop"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"

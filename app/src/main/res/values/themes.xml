@@ -14,4 +14,20 @@
         <!-- Customize your theme here. -->
         <item name="bottomNavigationStyle">@style/BottomNavigation</item>
     </style>
+
+    <style name="Base_Text_14_19_Medium_Manrope" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/manrope_medium</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/_14sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="H1_32_38_Regular_Oswald" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/oswald_regular</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_movies_size</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+
 </resources>

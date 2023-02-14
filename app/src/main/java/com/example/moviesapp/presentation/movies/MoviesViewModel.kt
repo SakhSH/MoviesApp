@@ -1,7 +1,5 @@
 package com.example.moviesapp.presentation.movies
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moviesapp.domain.usecases.GetAllMoviesUseCase
@@ -26,26 +24,30 @@ class MoviesViewModel @Inject constructor(
     private val listMovies: MutableList<ListItem.MoviesItem> by lazy { mutableListOf() }
     private var countPage = FIRST_OFFSET
     private var isLoading = false
-    private var isSearchMovies = false
 
     private val _screenState = MutableStateFlow<ScreenState>(ScreenState.Loading)
     val screenState: StateFlow<ScreenState> = _screenState.asStateFlow()
 
-    private val _movies = MutableStateFlow<List<ListItem.MoviesItem>>(listOf())
-    val movies: StateFlow<List<ListItem.MoviesItem>> = _movies.asStateFlow()
+    private val _isOnScrollListenerRecyclerView = MutableStateFlow(false)
+    val isOnScrollListenerRecyclerView: StateFlow<Boolean> = _isOnScrollListenerRecyclerView.asStateFlow()
 
     init {
         loadAllMovies(countPage)
     }
 
-    fun loadAllMovies(){
+    fun loadAllMovies() {
+        listMovies.clear()
         countPage = FIRST_OFFSET
         loadAllMovies(countPage)
     }
 
     private fun loadAllMovies(offset: Int) {
         viewModelScope.launch {
-            _screenState.value = ScreenState.Loading
+            if (offset > FIRST_OFFSET){
+                _screenState.value = ScreenState.LoadingNextPage
+            }else{
+                _screenState.value = ScreenState.Loading
+            }
             try {
                 withContext(Dispatchers.IO) {
                     val movies = getAllMoviesUseCase(offset).map {
@@ -59,8 +61,8 @@ class MoviesViewModel @Inject constructor(
                         listMovies.addAll(movies)
                     }
                 }
-                _movies.value = listMovies
-                _screenState.value = ScreenState.Content
+                _screenState.value = ScreenState.Content(listMovies)
+                _isOnScrollListenerRecyclerView.value = true
             } catch (e: Exception) {
                 e.printStackTrace()
                 _screenState.value =
@@ -75,7 +77,9 @@ class MoviesViewModel @Inject constructor(
         viewModelScope.launch {
             _screenState.value = ScreenState.Loading
             try {
+                _isOnScrollListenerRecyclerView.value = false
                 withContext(Dispatchers.IO) {
+                    countPage = FIRST_OFFSET
                     val movies = searchMoviesUseCase(query).map {
                         ListItem.MoviesItem(
                             displayTitle = it.displayTitle,
@@ -83,11 +87,8 @@ class MoviesViewModel @Inject constructor(
                             multimedia = it.multimedia
                         )
                     }
-                        listMovies.clear()
-                        listMovies.addAll(movies)
+                    _screenState.value = ScreenState.Content(movies)
                 }
-                _movies.value = listMovies
-                _screenState.value = ScreenState.Content
             } catch (e: Exception) {
                 e.printStackTrace()
                 _screenState.value =
@@ -99,9 +100,7 @@ class MoviesViewModel @Inject constructor(
     }
 
     fun loadingNextPage() {
-        if (isLoading) {
-            return
-        }
+        if (isLoading) return
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.IO) {

@@ -11,6 +11,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="white_alabaster">#FBFCFD</color>
+    <color name="blue_dark">#1F3F8D</color>
+    <color name="gray_dark_half_transparent">#A6484848</color>
 
     <color name="background_fragments">#A5A5A5</color>
 </resources>

@@ -4,22 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
+    android:layout_margin="@dimen/_5dp"
     app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="@dimen/l_margin">
+    app:cardCornerRadius="@dimen/_12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/l_margin">
+        android:layout_marginTop="@dimen/_12dp">
 
         <TextView
             android:id="@+id/tv_title_text"
             style="@style/MoviesText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/l_margin"
+            android:layout_marginHorizontal="@dimen/_12dp"
             android:paddingTop="@dimen/activity_vertical_margin"
             android:textAlignment="center"
             android:textColor="@color/black"
@@ -32,9 +32,9 @@
         <ImageView
             android:id="@+id/iv_logo_movie"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/height_imageview"
+            android:layout_height="@dimen/_300dp"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/l_margin"
+            android:layout_marginTop="@dimen/_12dp"
             android:contentDescription="@string/iv_logo"
             app:layout_constraintTop_toBottomOf="@+id/tv_title_text"
             tools:ignore="MissingConstraints"
@@ -45,8 +45,8 @@
             style="@style/MoviesText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/l_margin"
-            android:layout_marginTop="@dimen/l_margin"
+            android:layout_marginHorizontal="@dimen/_12dp"
+            android:layout_marginTop="@dimen/_12dp"
             android:paddingVertical="@dimen/activity_vertical_margin_item"
             android:textColor="@color/black"
             android:textSize="@dimen/text_description_size"

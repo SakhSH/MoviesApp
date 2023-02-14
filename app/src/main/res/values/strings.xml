@@ -12,4 +12,5 @@
     <string name="title_movies_list">Movies</string>
     <string name="search">search</string>
     <string name="title_critics_list">Critics</string>
+    <string name="start_typing_to_search">Start typing to search…</string>
 </resources>

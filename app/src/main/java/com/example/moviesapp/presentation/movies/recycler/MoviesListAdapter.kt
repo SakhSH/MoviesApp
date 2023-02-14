@@ -79,15 +79,11 @@ class MoviesListAdapter @Inject constructor(
 
     fun createTooManyRequest() {
         val listMut: MutableList<ListItem> = currentList.toMutableList()
-        if (currentList[currentList.lastIndex] == ListItem.Loader) {
-            listMut.removeLast()
-            if (currentList[currentList.lastIndex - 1] != ListItem.TooManyRequest) {
-                listMut.add(ListItem.TooManyRequest)
-            }
+        if (currentList[currentList.lastIndex] == ListItem.Loader) listMut.removeLast()
+        if (currentList[currentList.lastIndex] != ListItem.TooManyRequest) {
+            listMut.add(ListItem.TooManyRequest)
             submitList(listMut)
-        } else {
-            return
-        }
+        } else return
     }
 
     companion object {
