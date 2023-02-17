@@ -1,12 +1,10 @@
 package com.example.moviesapp.presentation.movies
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
@@ -14,7 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.moviesapp.R
 import com.example.moviesapp.data.api.CodeResponse
 import com.example.moviesapp.databinding.FragmentMoviesBinding
 import com.example.moviesapp.presentation.models.ScreenState
@@ -49,7 +46,6 @@ class MoviesFragment : Fragment() {
     }
 
     private var isCreateLoader = true
-    private var pressedTime: Long = 0
 
     @Inject
     lateinit var moviesAdapter: MoviesListAdapter
@@ -57,30 +53,6 @@ class MoviesFragment : Fragment() {
     private var _binding: FragmentMoviesBinding? = null
     private val binding: FragmentMoviesBinding
         get() = _binding ?: throw RuntimeException("FragmentMoviesBinding == null")
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        val callback: OnBackPressedCallback =
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-
-                    if (pressedTime + 2000 > System.currentTimeMillis()) {
-                        requireActivity().finish()
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            resources.getString(R.string.on_back_pressed_text),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    pressedTime = System.currentTimeMillis()
-                }
-            }
-        requireActivity().onBackPressedDispatcher.addCallback(
-            this,
-            callback
-        )
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -112,7 +84,6 @@ class MoviesFragment : Fragment() {
         }
     }
 
-
     private fun doOnSearch() {
         with(binding) {
             moviesAdapter.submitList(emptyList())
@@ -122,7 +93,6 @@ class MoviesFragment : Fragment() {
             viewModel.searchMovies(query)
         }
     }
-
 
     private fun doOnCleanSearch() {
         binding.editText.text.clear()
@@ -146,7 +116,6 @@ class MoviesFragment : Fragment() {
             }
         }
     }
-
 
     private fun showLoading(isLoading: Boolean) {
         with(binding) {
@@ -210,11 +179,5 @@ class MoviesFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        fun newInstance(): MoviesFragment {
-            return MoviesFragment()
-        }
     }
 }
